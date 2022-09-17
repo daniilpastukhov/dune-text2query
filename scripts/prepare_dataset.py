@@ -1,4 +1,5 @@
 import json
+import os.path
 
 from scraper.src.db import MongoDatabase
 from tqdm import tqdm
@@ -30,6 +31,9 @@ def prepare_dataset():
             'completion': ' ' + completion
         }
         dataset.append(datapoint)
+
+    if not os.path.exists(DATASET_SAVEPATH):
+        os.mkdir(DATASET_SAVEPATH)
 
     with open(DATASET_SAVEPATH + 'finetune_dataset.jsonl', 'w') as fd:
         for datapoint in dataset:
