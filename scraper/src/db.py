@@ -16,3 +16,8 @@ class MongoDatabase:
 
     def get_total_queries(self):
         return self.client.count_documents({})
+
+    def get_n_queries(self, n=-1):
+        if n == -1:
+            return self.collection.find({})
+        return self.collection.find({}).limit(n)
