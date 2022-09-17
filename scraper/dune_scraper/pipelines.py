@@ -1,6 +1,7 @@
 import os
+from dataclasses import asdict
 
-from src.db import MongoDatabase
+from dune_scraper.db import MongoDatabase
 
 
 class MongoPipeline:
@@ -16,6 +17,6 @@ class MongoPipeline:
 
     def process_item(self, item, spider):
         spider.logger.info('Processing item...')
-        self.db.insert_one(item)
+        self.db.insert_one(asdict(item))
         spider.logger.info('Processed item.')
         return item

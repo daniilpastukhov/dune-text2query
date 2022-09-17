@@ -9,8 +9,8 @@
 
 BOT_NAME = 'dune_scraper'
 
-SPIDER_MODULES = ['src.spiders']
-NEWSPIDER_MODULE = 'src.spiders'
+SPIDER_MODULES = ['dune_scraper.spiders']
+NEWSPIDER_MODULE = 'dune_scraper.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'scraper (plus79222222238@gmail.com)'
@@ -19,15 +19,15 @@ NEWSPIDER_MODULE = 'src.spiders'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 16
+CONCURRENT_REQUESTS = 64
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 5
+DOWNLOAD_DELAY = 0
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN = 16
-CONCURRENT_REQUESTS_PER_IP = 16
+CONCURRENT_REQUESTS_PER_DOMAIN = 64
+CONCURRENT_REQUESTS_PER_IP = 64
 
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False
@@ -57,7 +57,7 @@ DOWNLOAD_HANDLERS = {
 DOWNLOADER_MIDDLEWARES = {
     'scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler': 543,
     'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
-    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    # 'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
     'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
 }
 
@@ -70,7 +70,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'src.pipelines.PostgresPipeline': 300,
+    'dune_scraper.pipelines.MongoPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -105,4 +105,4 @@ TWISTED_REACTOR = 'twisted.internet.asyncioreactor.AsyncioSelectorReactor'
 # PLAYWRIGHT_ABORT_REQUEST = should_abort_request
 
 # Path to proxy list
-ROTATING_PROXY_LIST_PATH = '/app/proxies.txt'
+ROTATING_PROXY_LIST_PATH = '../proxies.txt'
