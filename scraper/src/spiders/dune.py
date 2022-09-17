@@ -3,9 +3,9 @@ import re
 from scrapy import Spider, Request
 from scrapy_playwright.page import PageMethod
 
-from src.items import PropertyItem
+from src.items import QueryItem
 
-from src.db import PostgresDatabase
+from src.db import MongoDatabase
 
 BASE_URL = 'https://www.sreality.cz/hledani/prodej/byty?strana=%d'
 
@@ -20,14 +20,11 @@ LIMIT = 500  # required number of items
 ITEMS_PER_PAGE = 20  # number of items per page
 
 # Connect to the database and retrieve number of properties
-db = PostgresDatabase()
-db.connect()
-n = db.number_of_properties()
-db.close()
+db = MongoDatabase()
 
 
-class SrealitySpider(Spider):
-    name: str = 'sreality'
+class DuneSpider(Spider):
+    name: str = 'dune'
     total_parsed_items: int = n
     current_page_number: int = total_parsed_items // ITEMS_PER_PAGE + 1
 
@@ -51,19 +48,13 @@ class SrealitySpider(Spider):
             if self.total_parsed_items >= LIMIT:
                 break
 
-            title = prop.css(TITLE_SELECTOR).extract_first()
-            locality = prop.css(LOCALITY_SELECTOR).extract_first()
-            price = prop.css(PRICE_SELECTOR).extract_first()
-            image_urls = prop.css(IMAGES_SELECTOR).getall()
+
 
             # Filter out relative URLs
             filtered_image_urls = list(filter(lambda x: re.match(r'https://*', x), image_urls))
-            yield PropertyItem(
-                id=self.total_parsed_items,
+            yield QueryItem(
                 title=title,
-                locality=locality,
-                price=price,
-                image_urls=filtered_image_urls
+
             )
 
             self.total_parsed_items += 1
