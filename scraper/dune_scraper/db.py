@@ -10,7 +10,7 @@ class MongoDatabase:
     def __init__(self) -> None:
         self.client = MongoClient(os.environ['MONGO_URI'])
         # self.collection = self.client['db']['queries']
-        self.collection = self.client['db']['filtered']
+        self.collection = self.client['db']['final']
         
     def insert_one(self, doc):
         self.collection.insert_one(doc)
@@ -20,3 +20,9 @@ class MongoDatabase:
 
     def get_total_queries(self):
         return self.collection.count_documents({})
+
+    def get_queries(self):
+        return self.collection.find({})
+
+    def find_one(self, query):
+        return self.collection.find_one({'_id': query})
