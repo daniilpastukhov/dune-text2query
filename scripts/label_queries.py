@@ -5,6 +5,7 @@ from scripts.templates import LABEL_QUERY_TEMPLATE
 from scraper.src.db import MongoDatabase
 from dotenv import load_dotenv
 from tqdm import tqdm
+from joblib import Parallel, delayed
 
 load_dotenv()
 
@@ -30,24 +31,26 @@ def label_query(query: str) -> str:
         frequency_penalty=0,
         presence_penalty=0
     )
-    return response['choices'][0]['text']
+    return response['choices'][0]['text'].strip()
 
 
-def get_queries(mongo_client: MongoDatabase):
-    collection = mongo_client.collection
-    return collection.find('{}')
-
-
-def label_queries(n=-1):
+def label_queries(queries):
     """Label queries with the help of GPT3 API."""
-    db = MongoDatabase()
-    queries = db.get_n_queries(n)
+
+    set_queries = set()
     for query in tqdm(queries):
-        query_label = label_query(query)
-        print(query_label)
-        query.update_one({'_id': query['_id']}, {'$set': {'query_label': query_label}})
+        text_query = query['query']
+        if len(text_query.split()) > 200 or text_query in set_queries:
+            continue
+        query_label = label_query(text_query)
+        set_queries.add(text_query)
+        db.update_label(query['_id'], query_label)
 
 
 if __name__ == '__main__':
-    label_queries()
+    db = MongoDatabase()
+    queries = db.get_n_queries()
+    labels = Parallel(n_jobs=8)(delayed(label_query)(q['_id']) for q in queries if len(q['_id'].split()) < 200)
+    for query, label in zip(queries, labels):
+        db.update_label(query['_id'], label)
     # label_queries_test()

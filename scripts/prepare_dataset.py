@@ -24,7 +24,10 @@ def prepare_dataset():
     db = MongoDatabase()
     dataset = []
     for query in tqdm(db.get_n_queries(-1)):
-        prompt = query['label']
+        try:
+            prompt = query['label']
+        except KeyError:
+            continue
         completion = query['query']
         datapoint = {
             'prompt': prompt,
