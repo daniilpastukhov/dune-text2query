@@ -1,3 +1,4 @@
+import json
 import os
 import openai
 from scripts.templates import LABEL_QUERY_TEMPLATE
@@ -43,8 +44,10 @@ def label_queries(n=-1):
     queries = db.get_n_queries(n)
     for query in tqdm(queries):
         query_label = label_query(query)
+        print(query_label)
         query.update_one({'_id': query['_id']}, {'$set': {'query_label': query_label}})
 
 
 if __name__ == '__main__':
     label_queries()
+    # label_queries_test()
