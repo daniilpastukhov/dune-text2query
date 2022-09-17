@@ -10,10 +10,10 @@ Machine learning on the way to to crypto analytics mass adoption.
 You can run scraper via Docker using `docker-compose up` command.
 
 ## Tech stack:
- ⁃ Python
- ⁃ OpenAI’s GPT-3
- ⁃ Scrapy framework
- ⁃ MongoDB (cloud)
+- Python
+- OpenAI’s GPT-3
+- Scrapy framework
+- MongoDB (cloud)
 
 ## .env file
 Template for storing environment variables:
